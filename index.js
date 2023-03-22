@@ -24,7 +24,7 @@ class PixivUser{
         return {
             site: "Pixiv User",
             url: this.getUrl(text),
-            icon: "https://s.pximg.net/www/js/build/14e52f8ff79c3dc931eb16c6f4b53890.svg"
+            icon: "images/pixiv.svg"
         }
     }
 
@@ -41,7 +41,7 @@ class PixivArtwork{
         return {
             site: "Pixiv Artwork",
             url: this.getUrl(text),
-            icon: "https://s.pximg.net/www/js/build/14e52f8ff79c3dc931eb16c6f4b53890.svg"
+            icon: "images/pixiv.svg"
         }
     }
 
@@ -56,7 +56,7 @@ class Nhentai{
         return {
             site: "Nhentai",
             url: this.getUrl(text),
-            icon: "https://static.nhentai.net/img/logo.090da3be7b51.svg"
+            icon: "images/nhentai.svg"
         }
     }
 
