@@ -1,73 +1,90 @@
 class DefaultUrl{
 
-    template(text){
+    constructor(text){
+        this.text = text
+        this.site = "Text without space"
+        this.icon = "images/url-icon.svg"
+        
+        this.normalizeUrl()
+        this.url  =  this.getUrl()
+    }
+    template(){
         return {
-            site: "Text without space",
-            url: this.getUrl(text),
-            icon: "images/url-icon.svg"
+            site: this.site,
+            url: this.url,
+            icon: this.icon
         }
     }
 
-    getUrl(text){
-        text = replaceAll(text, " ", '')
-        text = replaceAll(text, "(", '')
-        text = replaceAll(text, ")", '')
+    normalizeUrl(){    
+        this.text = replaceAll(this.text, " ", '')
+        this.text = replaceAll(this.text, "(", '')
+        this.text = replaceAll(this.text, ")", '')
+    }
 
-        return `${ (( ! text.startsWith("http"))  ? 'https://': '') + text}`
+    getUrl(){
+        return `${ (( ! this.text.startsWith("http"))  ? 'https://': '') + this.text}`
     }
 }
 
 
-class PixivUser{
-
-    template(text){
-        return {
-            site: "Pixiv User",
-            url: this.getUrl(text),
-            icon: "images/pixiv.svg"
-        }
+class PixivUser extends DefaultUrl{
+    
+    constructor(text){
+        super(text)
+        this.site = "Pixiv User"
+        this.icon = "images/pixiv.svg"
     }
-
-    getUrl(text){
-        text = text.replace(" ", "")
-        return `https://pixiv.net/users/${onlyNumber(text)}`
+    
+    getUrl(){
+        return `https://pixiv.net/users/${onlyNumber(this.text)}`
     }
     
 }
 
-class PixivArtwork{
+class PixivArtwork extends DefaultUrl{
 
-    template(text){
-        return {
-            site: "Pixiv Artwork",
-            url: this.getUrl(text),
-            icon: "images/pixiv.svg"
-        }
+    constructor(text){
+        super(text)
+        this.site = "Pixiv Artwork"
+        this.icon = "images/pixiv.svg"
     }
-
-    getUrl(text){
-        text = text.replace(" ", "")
-        return `https://pixiv.net/artworks/${onlyNumber(text)}`
+    
+    getUrl(){
+        return `https://pixiv.net/artworks/${onlyNumber(this.text)}`
     }
 }
 
-class Nhentai{
-    template(text){
-        return {
-            site: "Nhentai",
-            url: this.getUrl(text),
-            icon: "images/nhentai.svg"
-        }
+class Nhentai extends DefaultUrl{
+    constructor(text){
+        super(text)
+        this.site = "Nhentai"
+        this.icon = "images/nhentai.svg"
     }
 
-    getUrl(text){
-        text = text.replace(" ", "")
-        return `https://nhentai.net/g/${onlyNumber(text)}`
+    getUrl(){
+        return `https://nhentai.net/g/${onlyNumber(this.text)}`
+    }
+}
+
+class Twitter extends DefaultUrl{
+    constructor(text){
+        super(text)
+        this.site = "Twitter"
+        this.icon = "images/twitter.svg"
+    }
+
+    getUrl(){
+        return `https://twitter.com/${this.text}`
     }
 }
 
 function onlyNumber(text){
-    return text.match(/\d+/g).join('')
+    try {
+        return text.match(/\d+/g).join('')    
+    } catch (error) {
+        return ""
+    }
 }
 
 function replaceAll(str, find, replace) {
@@ -81,11 +98,28 @@ function escapeRegExp(string) {
 function findLinks() {
     let links = []
     let text_or_link = $("#text_or_link").val()
-
-    links.push(new DefaultUrl().template(text_or_link))
-    links.push(new PixivUser().template(text_or_link))
-    links.push(new PixivArtwork().template(text_or_link))
-    links.push(new Nhentai().template(text_or_link))
+    try {
+        if( text_or_link ){
+            links.push(new DefaultUrl(text_or_link).template())
+            links.push(new PixivUser(text_or_link).template())
+            links.push(new PixivArtwork(text_or_link).template())
+            links.push(new Nhentai(text_or_link).template())
+            links.push(new Twitter(text_or_link).template())
+        }else{
+            
+            const toastLiveExample = document.getElementById('liveToast')
+            const toast = new bootstrap.Toast(toastLiveExample)
+            $("#liveToastBody").html("Provade Text or Link")
+            toast.show()
+        }    
+    } catch (error) {
+        const toastLiveExample = document.getElementById('liveToast')
+        $("#liveToastBody").html(error.message)
+        const toast = new bootstrap.Toast(toastLiveExample)
+        toast.show()
+    }
+    
+    
 
     $("#listLinks").html("")
 
